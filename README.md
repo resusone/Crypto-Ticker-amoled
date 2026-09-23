@@ -5,7 +5,7 @@
 Crypto Ticker is Arduino code for the LilyGO T-Display-S3 AMOLED (1.91", ESP32-S3). It scrolls live crypto prices across the screen like a stock exchange ticker board, showing each coin's price in AUD with a green ▲ or red ▼ for its 24-hour change. It also scrolls the daily Crypto Fear & Greed Index. Price data comes from the free CoinGecko API, and the Fear & Greed Index comes from alternative.me. No API keys or sign-ups are needed.
 
 <p align="center">
-  <img width="640" height="364" alt="ResusOne Ticker" src="resusone_ticker.gif" />
+  <img width="640" height="364" alt="ResusOne Ticker" src="blob/main/ResusOne_Ticker.gif" />
 </p>
 
 ## Features
