@@ -4,7 +4,7 @@
 
 Crypto Ticker is Arduino code for the LilyGO T-Display-S3 AMOLED (1.91", ESP32-S3). It scrolls live crypto prices across the screen like a stock exchange ticker board, showing each coin's price in AUD with a green ▲ or red ▼ for its 24-hour change. It also scrolls the daily Crypto Fear & Greed Index. Price data comes from the free CoinGecko API, and the Fear & Greed Index comes from alternative.me. No API keys or sign-ups are needed.
 
-  <img width="640" height="364" alt="ResusOne Ticker" src="ResusOne_Ticker.gif" />
+  <img width="640" height="364" alt="ResusOne Ticker" src="images/ResusOne_Ticker.gif" />
 
 ## Features
 
@@ -44,6 +44,10 @@ None needed. The display, buttons and ESP32-S3 are all on the one board. Just pl
 
 The first time it starts, the ticker shows a **Wi-Fi Setup** screen with a QR code.
 
+<p align="center">
+  <img src="images/wifi-setup.jpg" alt="Wi-Fi setup: scan the QR code on the ticker, then pick your Wi-Fi on your phone" width="800" />
+</p>
+
 1. **Join the setup network:** scan the QR code with your phone's camera, or join the Wi-Fi network shown on screen (`CryptoTicker-XXXX`).
 2. **Choose your Wi-Fi:** a setup page opens automatically. If it doesn't, open **192.168.4.1** in your browser. Tap **Configure WiFi** and pick your home network.
 3. **Save:** enter your password and tap **Save**.
@@ -55,6 +59,11 @@ The ESP32 only connects to **2.4 GHz** Wi-Fi.
 ## Settings Page
 
 Once the ticker is on your Wi-Fi, open **http://cryptoticker.local** in a browser on any phone or computer connected to the same network. If that address doesn't work, use the IP address shown at the bottom of the ticker's screen. The address appears for 30 seconds after the ticker connects, and any time the ticker is paused, so a short button press brings it back.
+
+<p align="center">
+  <img src="images/settings-page.jpg" alt="Settings page on a phone" width="620" />
+  <img src="images/settings-demo.gif" alt="Adding a coin on the settings page" width="220" />
+</p>
 
 From the settings page you can:
 
