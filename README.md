@@ -12,6 +12,8 @@ Crypto Ticker is Arduino code for the LilyGO T-Display-S3 AMOLED (1.91", ESP32-S
 - **Prices in AUD:** each coin shows its price with a green ▲ or red ▼ for the 24-hour % change. The currency can be changed to USD, EUR, and others.
 - **Fear & Greed Index:** scrolls with the prices and is coloured from red (Extreme Fear) to green (Extreme Greed).
 - **Header status:** a clock, plus **LIVE**, **STALE**, **CONNECTING** or **NO WIFI** so you can see at a glance whether the data is current.
+- **Settings page:** add or remove coins, reorder them, and change the currency, speed, brightness, night hours and time zone from your phone or computer. No reflashing needed.
+- **Wi-Fi setup from your phone:** no code editing needed. Scan the QR code on the screen, pick your Wi-Fi and enter the password.
 - **Pause button:** press the BOOT button to freeze the scroll, and press it again to resume.
 - **Burn-in protection:**
   - Night dimming, from 11 pm to 7 am by default.
@@ -28,7 +30,46 @@ Crypto Ticker is Arduino code for the LilyGO T-Display-S3 AMOLED (1.91", ESP32-S
 
 None needed. The display, buttons and ESP32-S3 are all on the one board. Just plug it in with USB-C.
 
-## Installation
+## Quick Install (no software needed)
+
+1. Download `CryptoTicker_vX.X.X_merged.bin` from the [latest release](https://github.com/resusone/Crypto-Ticker-amoled/releases/latest).
+2. Open a web flasher in Chrome or Edge, for example [Espressif's ESP Tool](https://espressif.github.io/esptool-js/).
+3. Put the board in download mode: hold **BOOT**, press and release **RST**, then let go of **BOOT**.
+4. Click **Connect** and choose the port.
+5. Click **Erase Flash** and wait for it to finish.
+6. Add the `.bin` file at address **0x0**, then click **Program**.
+7. When it finishes, press **RST** and follow the Wi-Fi setup below.
+
+## Wi-Fi Setup
+
+The first time it starts, the ticker shows a **Wi-Fi Setup** screen with a QR code.
+
+1. **Join the setup network:** scan the QR code with your phone's camera, or join the Wi-Fi network shown on screen (`CryptoTicker-XXXX`).
+2. **Choose your Wi-Fi:** a setup page opens automatically. If it doesn't, open **192.168.4.1** in your browser. Tap **Configure WiFi** and pick your home network.
+3. **Save:** enter your password and tap **Save**.
+
+The ticker connects and starts scrolling, and it remembers your network from then on. To change networks later, **hold the BOOT button for 5 seconds**.
+
+The ESP32 only connects to **2.4 GHz** Wi-Fi.
+
+## Settings Page
+
+Once the ticker is on your Wi-Fi, open **http://cryptoticker.local** in a browser on any phone or computer connected to the same network. If that address doesn't work, use the IP address shown at the bottom of the ticker's screen. The address appears for 30 seconds after the ticker connects, and any time the ticker is paused, so a short button press brings it back.
+
+From the settings page you can:
+
+- **Coins:** search for coins to add (up to 20), remove them, and change their order.
+- **Currency:** AUD, USD, NZD, EUR, GBP, CAD or SGD.
+- **Scroll speed:** and whether the Fear & Greed Index is shown.
+- **Brightness:** separate day and night brightness, and the night-mode hours.
+- **Time zone:** used for the clock and night mode.
+
+Tap **Save** and the ticker updates straight away. Settings are stored on the ticker, so they survive power cuts and restarts. **Restore default settings** puts everything back to how it came.
+
+The settings page is only reachable from your own Wi-Fi network, and it has no password. Anyone on your Wi-Fi can open it, so keep that in mind on shared networks.
+
+## Installation (Arduino IDE, to edit the code)
+
 
 1. **Install the Arduino IDE** (version 2.x) from [arduino.cc](https://www.arduino.cc/en/software).
 
@@ -37,19 +78,13 @@ None needed. The display, buttons and ESP32-S3 are all on the one board. Just pl
 3. **Install the libraries.** Go to `Tools > Manage Libraries` and install:
    - **TFT_eSPI** by Bodmer, used to draw everything off-screen before it's sent to the display. Use the default setup; you don't need to edit `User_Setup.h`.
    - **ArduinoJson** by Benoit Blanchon, version 7.x, used to read the data from CoinGecko and alternative.me.
+   - **WiFiManager** by tzapu, version 2.0.17, used for the phone Wi-Fi setup.
 
    The following come with the ESP32 board package, so no install is needed: WiFi, WiFiClientSecure, HTTPClient and SPI.
 
-4. **Open the sketch.** Open `crypto_ticker_amoled/crypto_ticker_amoled.ino`. Keep all the files in that folder together; the display driver and the large font are separate files.
+4. **Open the sketch.** Open `crypto_ticker_amoled/crypto_ticker_amoled.ino`. Keep all the files in that folder together; the display driver, QR code generator and large font are separate files. There's no need to add Wi-Fi details to the code, because they're set up from your phone.
 
-5. **Add your Wi-Fi details** near the top of the sketch:
-   ```cpp
-   const char* WIFI_SSID = "YOUR_WIFI_NAME";
-   const char* WIFI_PASS = "YOUR_WIFI_PASSWORD";
-   ```
-   The ESP32 only connects to **2.4 GHz** Wi-Fi.
-
-6. **Select the board settings** in the `Tools` menu:
+5. **Select the board settings** in the `Tools` menu:
 
    | Setting | Value |
    |---|---|
@@ -60,35 +95,36 @@ None needed. The display, buttons and ESP32-S3 are all on the one board. Just pl
    | Partition Scheme | 16M Flash (3MB APP/9.9MB FATFS) |
    | PSRAM | **OPI PSRAM** (required) |
 
-7. **Select the port** under `Tools > Port`. If the board isn't showing up:
+6. **Select the port** under `Tools > Port`. If the board isn't showing up:
    - Put it in download mode: hold **BOOT**, press and release **RST**, then let go of **BOOT**.
    - Check the port list again.
 
-8. **Upload.** Hit `Verify`, then `Upload`. When it finishes, press **RST** once. You should see **CONNECTING...**, and then the ticker will start scrolling within about 10 seconds.
+7. **Upload.** Hit `Verify`, then `Upload`. When it finishes, press **RST** once, then follow the [Wi-Fi Setup](#wi-fi-setup) steps.
 
-## Settings
+## Default Settings
 
-Everything you're likely to want to change is in the `USER SETTINGS` block at the top of the sketch:
+Most settings are changed from the [Settings Page](#settings-page) and don't need any code changes. The factory defaults are at the top of the sketch, under `DEFAULT SETTINGS`, if you'd like different ones in your own build:
 
-| Setting | Default | What it does |
-|---|---|---|
-| `coins[]` | BTC, ETH, SOL, XRP, ADA, DOGE | The coins to scroll. Uses [CoinGecko IDs](https://www.coingecko.com/), e.g. `"bitcoin"`, `"chainlink"`. |
-| `CURRENCY` / `CURRENCY_SYM` | `"aud"` / `"$"` | The price currency and its symbol. |
-| `TZ_INFO` | Sydney/Melbourne time | Your time zone, used for the clock and night dimming. Other Australian zones are listed in the comments. |
-| `SCROLL_SPEED_PPS` | 110 | Scroll speed in pixels per second. |
-| `SHOW_FEAR_GREED` | true | Shows or hides the Fear & Greed Index. |
-| `BRIGHTNESS_DAY` / `BRIGHTNESS_NIGHT` | 180 / 35 | Screen brightness from 0 to 255. Set night to 0 to turn the screen off overnight. |
-| `NIGHT_START_HOUR` / `NIGHT_END_HOUR` | 23 / 7 | The night dimming hours. |
+| Setting | Default |
+|---|---|
+| Coins | BTC, ETH, SOL, XRP, ADA, DOGE |
+| Currency | AUD |
+| Time zone | Sydney / Melbourne / Canberra / Hobart |
+| Scroll speed | 110 pixels per second |
+| Fear & Greed Index | On |
+| Day / night brightness | 180 / 35 (out of 255) |
+| Night mode | 11 pm to 7 am |
 
 ## Usage
 
 Plug USB-C into the board, and it should boot and start scrolling in less than 10 seconds.
 
-- **BOOT button:** pauses and resumes the ticker. While paused, prices keep updating in the background. It resumes on its own after 5 minutes to protect the screen from burn-in.
+- **BOOT button, short press:** pauses and resumes the ticker. While paused, prices keep updating in the background. It resumes on its own after 5 minutes to protect the screen from burn-in.
+- **BOOT button, hold 5 seconds:** clears the saved Wi-Fi and restarts into Wi-Fi setup. A countdown appears after 1 second, so you can let go to cancel.
 - **Header status:**
   - **LIVE**: prices are current.
   - **STALE**: no update for a few minutes; it's still retrying.
-  - **NO WIFI**: check your Wi-Fi details or signal.
+  - **NO WIFI**: it can't reach your network and keeps retrying. If your Wi-Fi has changed, hold the button for 5 seconds to set it up again.
 
 Prices are delayed by roughly one minute because of the free API's limits, so don't use this for trading.
 
@@ -97,7 +133,12 @@ Prices are delayed by roughly one minute because of the free API's limits, so do
 - **`Set PSRAM: OPI PSRAM` error when compiling:** set `Tools > PSRAM` to **OPI PSRAM**.
 - **Compile errors in `rm67162.cpp`:** you're on a 3.x ESP32 board package. Install **2.0.17** instead.
 - **Screen stays black after upload:** press **RST**, because the board may still be in download mode.
-- **Stuck on CONNECTING:** double-check the Wi-Fi name and password, and make sure your network is 2.4 GHz.
+- **`cryptoticker.local` doesn't open:** some Android phones and older Windows computers don't support `.local` addresses. Use the IP address shown on the ticker instead: short-press the button to pause, and the address appears at the bottom.
+- **Coin search doesn't work on the settings page:** open **Add by CoinGecko ID instead** and type the coin's ID. It's the last part of the coin's page address on coingecko.com, for example `chainlink`.
+- **A coin shows `---`:** the CoinGecko ID is probably wrong. Remove it and add it again using search.
+- **Stuck on CONNECTING or NO WIFI:** hold the button for 5 seconds and set up Wi-Fi again, checking the password. Make sure your network is 2.4 GHz.
+- **Setup page doesn't open on your phone:** stay connected to `CryptoTicker-XXXX` and open **192.168.4.1** in your browser. Some phones ask "this network has no internet, stay connected?" Tap **Yes** or **Keep**.
+- **"Setup timed out" on screen:** nobody finished setup within 10 minutes. Press the button to try again.
 
 ## Credits
 
@@ -105,7 +146,8 @@ Prices are delayed by roughly one minute because of the free API's limits, so do
 - Large font generated from [GNU FreeFont](https://www.gnu.org/software/freefont/) FreeSansBold with the Adafruit GFX `fontconvert` tool.
 - Price data [powered by CoinGecko](https://www.coingecko.com/en/api).
 - Fear & Greed Index data from [alternative.me](https://alternative.me/crypto/fear-and-greed-index/).
-- Libraries: [TFT_eSPI](https://github.com/Bodmer/TFT_eSPI) by Bodmer and [ArduinoJson](https://github.com/bblanchon/ArduinoJson) by Benoit Blanchon.
+- Libraries: [TFT_eSPI](https://github.com/Bodmer/TFT_eSPI) by Bodmer, [ArduinoJson](https://github.com/bblanchon/ArduinoJson) by Benoit Blanchon, and [WiFiManager](https://github.com/tzapu/WiFiManager) by tzapu.
+- QR code generator (`qrcode_rm.c/.h`) from [ricmoo/QRCode](https://github.com/ricmoo/QRCode) (MIT licence), renamed to avoid a clash with the ESP32's built-in `qrcode.h`.
 
 ## Changelog
 

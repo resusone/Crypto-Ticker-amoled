@@ -1,0 +1,16 @@
+# Build output
+build/
+*.elf
+*.map
+
+# Compiled firmware (may contain Wi-Fi credentials - never commit)
+*.bin
+
+# Personal secrets
+secrets.h
+
+# OS / editor clutter
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
